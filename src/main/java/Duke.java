@@ -1,7 +1,9 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Duke {
 	static Scanner sc;
+	static ArrayList list;
 	
     public static void main(String[] args) {
         /*String logo = " ____        _        \n"
@@ -19,6 +21,7 @@ public class Duke {
     	sc.close();
     }
     
+    //Level 1
     static void nextCommand()	{
     	String test = sc.nextLine();
     	System.out.println("	____________________________________________________________\n	");
