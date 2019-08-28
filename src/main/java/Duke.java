@@ -33,33 +33,77 @@ public class Duke {
     	else if (test.equals("list"))	{
         	for (int i = 0; i < list.size(); i++)	{
         		System.out.print("	" + (i+1) + ". ");
-        		System.out.println("	[" + list.get(i).getStatusIcon() + "] " + list.get(i).getTask());
+        		System.out.println(list.get(i));
         	}
-    		System.out.println("	____________________________________________________________\n	");
-    		nextCommand();
+        	endCommand();
+    	}
+    	else if (test.length() < 4)	{
+    		list.add(new Task(test));
+    		System.out.println('	' + "added: " + test);
+        	endCommand();
     	}
     	else if (test.substring(0, 4).equals("done")) {
     		int index = Integer.parseInt(test.substring(5, 6)) - 1;
     		list.get(index).markAsDone();
     		System.out.println("	Nice! I've marked this task as done:");
-    		System.out.println("	[" + list.get(index).getStatusIcon() + "] " + list.get(index).getTask());
-    		System.out.println("	____________________________________________________________");
-    		nextCommand();
+    		System.out.println("	" + list.get(index));
+    		endCommand();
+    	}
+    	else if (test.substring(0, 4).equals("todo"))	{
+    		list.add(new Todo(test.substring(5, test.length())));
+    		System.out.println("	Got it. I've added this task:");
+    		System.out.println("	" + list.get(list.size() - 1));
+    		showCount();
+    		endCommand();
+    	}
+    	else if (test.length() < 5)	{
+    		list.add(new Task(test));
+    		System.out.println('	' + "added: " + test);
+        	endCommand();
+    	}
+    	else if (test.substring(0, 5).equals("event"))	{
+    		String[] words = test.substring(6, test.length()).split(" /at ");
+    		list.add(new Event(words[0], words[1]));
+    		System.out.println("	Got it. I've added this task:");
+    		System.out.println("	" + list.get(list.size() - 1));
+    		showCount();
+    		endCommand();
+    	}
+    	else if (test.length() < 8)	{
+    		list.add(new Task(test));
+    		System.out.println('	' + "added: " + test);
+        	endCommand();
+    	}
+    	else if (test.substring(0, 8).equals("deadline"))	{
+    		String[] words = test.substring(9, test.length()).split(" /by ");
+    		list.add(new Deadline(words[0], words[1]));
+    		System.out.println("	Got it. I've added this task:");
+    		System.out.println("	" + list.get(list.size() - 1));
+    		showCount();
+    		endCommand();
     	}
     	else	{
     		list.add(new Task(test));
     		System.out.println('	' + "added: " + test);
-        	System.out.println("	____________________________________________________________");
-        	nextCommand();
+        	endCommand();
     	}
     }
     
+    public static void showCount()	{
+    	System.out.println("	Now you have " + list.size() + " tasks in the list.");
+    }
+    
+    public static void endCommand()	{
+    	System.out.println("	____________________________________________________________");
+    	nextCommand();
+    }
+    
     public static class Task {
-    	protected String task;
+    	protected String desc;
     	protected boolean isDone;
     	
-    	public Task(String task)	{
-    		this.task = task;
+    	public Task(String desc)	{
+    		this.desc = desc;
     		this.isDone = false;
     	}
     	
@@ -71,8 +115,52 @@ public class Duke {
     		this.isDone = true;
     	}
     	
-    	public String getTask()	{
-    		return this.task;
+    	public String getDesc()	{
+    		return desc;
     	}
+    	
+    	@Override
+        public String toString() {
+            return "[" + getStatusIcon() + "] " + desc;
+        }
+    }
+    
+    public static class Deadline extends Task {
+        protected String by;
+
+        public Deadline(String description, String by) {
+            super(description);
+            this.by = by;
+        }
+
+        @Override
+        public String toString() {
+            return "[D]" + super.toString() + " (by: " + by + ")";
+        }
+    }
+    
+    public static class Event extends Task {
+        protected String at;
+
+        public Event(String description, String at) {
+            super(description);
+            this.at = at;
+        }
+
+        @Override
+        public String toString() {
+            return "[E]" + super.toString() + " (at: " + at + ")";
+        }
+    }	
+    
+    public static class Todo extends Task {
+        public Todo(String description) {
+            super(description);
+        }
+
+        @Override
+        public String toString() {
+            return "[T]" + super.toString();
+        }
     }
 }
