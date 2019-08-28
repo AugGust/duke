@@ -1,0 +1,4 @@
+T | 0 | what
+D | 1 | this | tmr
+E | 0 | this | tomorrow
+E | 0 | one | ytd

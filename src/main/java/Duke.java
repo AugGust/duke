@@ -1,17 +1,57 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Duke {
 	static Scanner sc;
 	static ArrayList<Task> list;
+	static Path saveFile = Paths.get("", "data");
 
 	public static void main(String[] args) throws DukeException {
-		/*
-		 * String logo = " ____        _        \n" + "|  _ \\ _   _| | _____ \n" +
-		 * "| | | | | | | |/ / _ \\\n" + "| |_| | |_| |   <  __/\n" +
-		 * "|____/ \\__,_|_|\\_\\___|\n"; System.out.println("Hello from\n" + logo);
-		 */
 		list = new ArrayList<Task>();
+		File file = new File(saveFile.toAbsolutePath().toString());
+		if (!file.exists())
+			file.mkdir();
+		saveFile = Paths.get("", "data", "duke.txt");
+		file = new File(saveFile.toAbsolutePath().toString());
+		try {
+			if (!file.createNewFile()) {
+				// found previous settings
+				String fileStr = Files.readString(saveFile);
+				String[] entries = fileStr.split("\n");
+				if (entries[0].length() != 0) {
+					for (int i = 0; i < entries.length; i++) {
+						String[] words = entries[i].split(" | ");
+						if (words[0].equals("T")) {
+							Todo temp = new Todo(words[4]);
+							if (words[2].equals("1"))
+								temp.markAsDone();
+							list.add(temp);
+						} else if (words[0].equals("E")) {
+							System.out.println();
+							Event temp = new Event(words[4], words[6]);
+							if (words[2].equals("1"))
+								temp.markAsDone();
+							list.add(temp);
+						} else {
+							Deadline temp = new Deadline(words[4], words[6]);
+							if (words[2].equals("1"))
+								temp.markAsDone();
+							list.add(temp);
+						}
+					}
+				}
+			} else {
+				System.out.println("	Created new save file");
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		System.out.println("	____________________________________________________________");
 		System.out.println("	Hello! I'm Duke");
 		System.out.println("	What can I do for you?");
@@ -27,6 +67,7 @@ public class Duke {
 		if (test.equals("bye")) {
 			System.out.println("	Bye. Hope to see you again soon!");
 			System.out.println("	____________________________________________________________\n	");
+			return;
 		} else if (test.equals("list")) {
 			for (int i = 0; i < list.size(); i++) {
 				System.out.print("	" + (i + 1) + ". ");
@@ -83,6 +124,7 @@ public class Duke {
 	}
 
 	public static void endCommand() throws DukeException {
+		save();
 		System.out.println("	____________________________________________________________");
 		nextCommand();
 	}
@@ -104,6 +146,10 @@ public class Duke {
 			this.isDone = true;
 		}
 
+		public String isDoneStr() {
+			return (isDone ? "1" : "0");
+		}
+
 		public String getDesc() {
 			return desc;
 		}
@@ -111,6 +157,10 @@ public class Duke {
 		@Override
 		public String toString() {
 			return "[" + getStatusIcon() + "] " + desc;
+		}
+
+		public String toSave() {
+			return desc;
 		}
 	}
 
@@ -126,6 +176,11 @@ public class Duke {
 		public String toString() {
 			return "[D]" + super.toString() + " (by: " + by + ")";
 		}
+
+		@Override
+		public String toSave() {
+			return "D | " + super.isDoneStr() + " | " + super.getDesc() + " | " + by;
+		}
 	}
 
 	public static class Event extends Task {
@@ -140,6 +195,11 @@ public class Duke {
 		public String toString() {
 			return "[E]" + super.toString() + " (at: " + at + ")";
 		}
+
+		@Override
+		public String toSave() {
+			return "E | " + super.isDoneStr() + " | " + super.getDesc() + " | " + at;
+		}
 	}
 
 	public static class Todo extends Task {
@@ -150,6 +210,23 @@ public class Duke {
 		@Override
 		public String toString() {
 			return "[T]" + super.toString();
+		}
+
+		@Override
+		public String toSave() {
+			return "T | " + super.isDoneStr() + " | " + super.getDesc();
+		}
+	}
+
+	public static void save() {
+		String toWrite = "";
+		for (int i = 0; i < list.size(); i++)
+			toWrite += list.get(i).toSave() + "\n";
+		try {
+			Files.deleteIfExists(saveFile);
+			Files.writeString(saveFile, toWrite, StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			System.out.println("Error saving!");
 		}
 	}
 
