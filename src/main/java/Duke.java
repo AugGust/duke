@@ -5,7 +5,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Scanner;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Duke {
 	static Scanner sc;
@@ -26,21 +31,20 @@ public class Duke {
 				String[] entries = fileStr.split("\n");
 				if (entries[0].length() != 0) {
 					for (int i = 0; i < entries.length; i++) {
-						String[] words = entries[i].split(" | ");
+						String[] words = entries[i].split(" \\| ");
 						if (words[0].equals("T")) {
-							Todo temp = new Todo(words[4]);
-							if (words[2].equals("1"))
+							Todo temp = new Todo(words[2]);
+							if (words[1].equals("1"))
 								temp.markAsDone();
 							list.add(temp);
 						} else if (words[0].equals("E")) {
-							System.out.println();
-							Event temp = new Event(words[4], words[6]);
-							if (words[2].equals("1"))
+							Event temp = new Event(words[2], words[3]);
+							if (words[1].equals("1"))
 								temp.markAsDone();
 							list.add(temp);
 						} else {
-							Deadline temp = new Deadline(words[4], words[6]);
-							if (words[2].equals("1"))
+							Deadline temp = new Deadline(words[2], words[3]);
+							if (words[1].equals("1"))
 								temp.markAsDone();
 							list.add(temp);
 						}
@@ -98,7 +102,9 @@ public class Duke {
 			String[] words = test.substring(6, test.length()).split(" /at ");
 			if (words.length < 2)
 				throw new DukeException("event format");
-			list.add(new Event(words[0], words[1]));
+			else if (!checkDateTimeFormat(words[1]))
+				throw new DukeException("event format");
+			list.add(new Event(words[0], formatDateTime(words[1])));
 			System.out.println("	Got it. I've added this task:");
 			System.out.println("	" + list.get(list.size() - 1));
 			showCount();
@@ -109,7 +115,9 @@ public class Duke {
 			String[] words = test.substring(9, test.length()).split(" /by ");
 			if (words.length < 2)
 				throw new DukeException("deadline format");
-			list.add(new Deadline(words[0], words[1]));
+			else if (!checkDateTimeFormat(words[1]))
+				throw new DukeException("deadline format");
+			list.add(new Deadline(words[0], formatDateTime(words[1])));
 			System.out.println("	Got it. I've added this task:");
 			System.out.println("	" + list.get(list.size() - 1));
 			showCount();
@@ -218,6 +226,37 @@ public class Duke {
 		}
 	}
 
+	public static boolean checkDateTimeFormat(String input)	{
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
+		sdf.setLenient(false);
+		try {
+			sdf.parse(input);
+			return true;
+		} catch (ParseException e) {
+			return false;
+		}
+	}
+	
+	public static String formatDateTime(String input)	{
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
+		String formatted = "";
+		try	{
+			Date date = sdf.parse(input);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			String hour = "" + cal.get(Calendar.HOUR_OF_DAY);
+			if (hour.length() == 1)
+				hour = "0" + hour;
+			String min = "" + cal.get(Calendar.MINUTE);
+			if (min.length() == 1)
+				min = "0" + min;
+			formatted = cal.get(Calendar.DAY_OF_MONTH) + " " + new DateFormatSymbols().getMonths()[cal.get(Calendar.MONTH)] + " " + cal.get(Calendar.YEAR) + " " + hour + min + "H";
+			return formatted;
+		}	catch (ParseException e)	{
+			return formatted;
+		}
+	}
+	
 	public static void save() {
 		String toWrite = "";
 		for (int i = 0; i < list.size(); i++)
@@ -237,9 +276,9 @@ public class Duke {
 			else if (message.equals("todo blank"))
 				System.out.println("	☹ OOPS!!! The description of a todo cannot be empty.");
 			else if (message.equals("event format"))
-				System.out.println("	☹ OOPS!!! The format of event is wrong. Format: event <name> /at <time>");
+				System.out.println("	☹ OOPS!!! The format of event is wrong. Format: event <name> /at <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
 			else if (message.equals("deadline format"))
-				System.out.println("	☹ OOPS!!! The format of deadline is wrong. Format: deadline <name> /by <time>");
+				System.out.println("	☹ OOPS!!! The format of deadline is wrong. Format: deadline <name> /by <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
 			else if (message.equals("done index"))
 				System.out.println("	☹ OOPS!!! The number is out of range");
 			endCommand();

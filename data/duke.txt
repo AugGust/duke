@@ -1,4 +1,2 @@
-T | 0 | what
-D | 1 | this | tmr
-E | 0 | this | tomorrow
-E | 0 | one | ytd
+E | 0 | test | 1 February 2019 1800H
+D | 1 | this assignment | 29 August 2019 1400H
