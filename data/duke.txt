@@ -1,2 +1,2 @@
-E | 0 | test | 1 February 2019 1800H
-D | 1 | this assignment | 29 August 2019 1400H
+T | 0 | test
+T | 0 | get books
