@@ -88,7 +88,23 @@ public class Duke {
 			System.out.println("	Nice! I've marked this task as done:");
 			System.out.println("	" + list.get(index));
 			endCommand();
-		} else if (test.substring(0, 5).equals("todo ")) {
+		} 
+		else if (test.substring(0, 5).equals("find "))	{
+			String searchTerm = test.substring(5, test.length());
+			System.out.println("search term = " + searchTerm);
+			ArrayList<Task> foundList = new ArrayList<Task>();
+			for (int i = 0; i < list.size(); i++)	{
+				if (list.get(i).toString().contains(searchTerm))
+					foundList.add(list.get(i));
+			}
+			System.out.println("     Here are the matching tasks in your list:");
+			for (int i = 0; i < foundList.size(); i++) {
+				System.out.print("     " + (i+1) + ".");
+				System.out.println(foundList.get(i));
+			}
+			endCommand();
+		}
+		else if (test.substring(0, 5).equals("todo ")) {
 			if (test.length() <= 5)
 				throw new DukeException("todo blank");
 			list.add(new Todo(test.substring(5, test.length())));
