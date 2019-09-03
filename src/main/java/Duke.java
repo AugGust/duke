@@ -109,6 +109,29 @@ public class Duke {
 			System.out.println("	" + list.get(list.size() - 1));
 			showCount();
 			endCommand();
+		} else if (test.length() < 7) {
+			throw new DukeException("wrong command");
+		} else if (test.substring(0, 7).equals("delete ")) {
+			if (test.length() <= 7)
+				throw new DukeException("delete format");
+			String number = test.split(" ")[1];
+			int index = 0;
+			try {
+				index = Integer.parseInt(number) - 1;
+			} catch (NumberFormatException e) {
+				throw new DukeException("delete format");
+			}
+			Task toDelete;
+			try {
+				toDelete = list.get(index);
+				System.out.println("	Noted. I've removed this task:");
+				System.out.println("	" + toDelete);
+				list.remove(index);
+				showCount();
+				endCommand();
+			} catch (IndexOutOfBoundsException e) {
+				throw new DukeException("out of bounds");
+			}
 		} else if (test.length() < 9) {
 			throw new DukeException("wrong command");
 		} else if (test.substring(0, 9).equals("deadline ")) {
@@ -226,7 +249,7 @@ public class Duke {
 		}
 	}
 
-	public static boolean checkDateTimeFormat(String input)	{
+	public static boolean checkDateTimeFormat(String input) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
 		sdf.setLenient(false);
 		try {
@@ -236,11 +259,11 @@ public class Duke {
 			return false;
 		}
 	}
-	
-	public static String formatDateTime(String input)	{
+
+	public static String formatDateTime(String input) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
 		String formatted = "";
-		try	{
+		try {
 			Date date = sdf.parse(input);
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
@@ -250,13 +273,15 @@ public class Duke {
 			String min = "" + cal.get(Calendar.MINUTE);
 			if (min.length() == 1)
 				min = "0" + min;
-			formatted = cal.get(Calendar.DAY_OF_MONTH) + " " + new DateFormatSymbols().getMonths()[cal.get(Calendar.MONTH)] + " " + cal.get(Calendar.YEAR) + " " + hour + min + "H";
+			formatted = cal.get(Calendar.DAY_OF_MONTH) + " "
+					+ new DateFormatSymbols().getMonths()[cal.get(Calendar.MONTH)] + " " + cal.get(Calendar.YEAR) + " "
+					+ hour + min + "H";
 			return formatted;
-		}	catch (ParseException e)	{
+		} catch (ParseException e) {
 			return formatted;
 		}
 	}
-	
+
 	public static void save() {
 		String toWrite = "";
 		for (int i = 0; i < list.size(); i++)
@@ -276,11 +301,17 @@ public class Duke {
 			else if (message.equals("todo blank"))
 				System.out.println("	☹ OOPS!!! The description of a todo cannot be empty.");
 			else if (message.equals("event format"))
-				System.out.println("	☹ OOPS!!! The format of event is wrong. Format: event <name> /at <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
+				System.out.println(
+						"	☹ OOPS!!! The format of event is wrong. Format: event <name> /at <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
 			else if (message.equals("deadline format"))
-				System.out.println("	☹ OOPS!!! The format of deadline is wrong. Format: deadline <name> /by <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
+				System.out.println(
+						"	☹ OOPS!!! The format of deadline is wrong. Format: deadline <name> /by <dd/MM/yyyy HHmm>, e.g. 02/12/2019 1800");
 			else if (message.equals("done index"))
 				System.out.println("	☹ OOPS!!! The number is out of range");
+			else if (message.equals("delete format"))
+				System.out.println("	☹ OOPS!!! Please enter the number of the task you want to delete");
+			else if (message.equals("out of bounds"))
+				System.out.println("	☹ OOPS!!! The number is too high!");
 			endCommand();
 		}
 	}
