@@ -1,4 +1,8 @@
 public class DukeException extends Exception {
+	/**
+	 * @param message Type of error
+	 * @throws DukeException To be caught for response
+	 */
 	public DukeException(String message) throws DukeException {
 		drawLine();
 		if (message.equals("wrong command"))

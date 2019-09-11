@@ -7,8 +7,10 @@ public class Duke {
 	private Ui ui;
 	private Parser ps;
 	private Scanner sc;
-	// static Path saveFile = Paths.get("", "data", "duke.txt");
 
+	/**
+	 * @param File File path for save data of Duke
+	 */
 	public Duke(String filePath) {
 		ui = new Ui();
 		ps = new Parser();
@@ -22,11 +24,18 @@ public class Duke {
 		}
 	}
 
+	
+	/**
+	 * Starts instance of Duke
+	 */
 	public void run() {
 		ui.welcome();
 		nextCommand();
 	}
 
+	/**
+	 * Start a new command from the user
+	 */
 	void nextCommand() {
 		Command command = new Command();
 		try {
@@ -93,6 +102,9 @@ public class Duke {
 		nextCommand();
 	}
 
+	/**
+	 * For catching out of index inputs by user
+	 */
 	void outOfIndex() {
 		try {
 			new DukeException("index");

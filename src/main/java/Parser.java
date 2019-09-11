@@ -9,6 +9,11 @@ public class Parser {
 	public Parser() {
 	}
 	
+	/**
+	 * @param test Input String by user
+	 * @return Command Object
+	 * @throws DukeException To be caught for error handling
+	 */
 	public Command parseCommand(String test) throws DukeException	{
 		if (test.equals("bye"))
 			return new Command(0);
@@ -68,6 +73,10 @@ public class Parser {
 			throw new DukeException("wrong command");
 	}
 	
+	/**
+	 * @param input Input String for DateTime. Correct Format: dd/MM/yyyy HHmm
+	 * @return True/false, if String conforms to format
+	 */
 	public static boolean checkDateTimeFormat(String input) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
 		sdf.setLenient(false);
@@ -79,6 +88,10 @@ public class Parser {
 		}
 	}
 
+	/**
+	 * @param input Input String for DateTime. Correct Format: dd/MM/yyyy HHmm
+	 * @return Formatted, reader friendly date and time
+	 */
 	public static String formatDateTime(String input) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmm");
 		String formatted = "";

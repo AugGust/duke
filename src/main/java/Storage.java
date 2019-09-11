@@ -5,13 +5,29 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
+/**
+ * @author Jy
+ *
+ */
+/**
+ * @author Jy
+ *
+ */
 public class Storage {
 	String filePath;
 	
+	/**
+	 * @param filePath File path for save data of Duke
+	 */
 	public Storage(String filePath) {
 		this.filePath = filePath;
 	}
 	
+	/**
+	 * Attempts to load saved data of Duke
+	 * @return ArrayList of Tasks
+	 * @throws DukeException IOException during file access
+	 */
 	public ArrayList<Task> load() throws DukeException	{
 		ArrayList<Task> loadedTasks = new ArrayList<Task>();
 		
@@ -56,7 +72,10 @@ public class Storage {
 		return loadedTasks;
 	}
 	
-	void save(TaskList list)	{
+	/**
+	 * @param list Saves given TaskList to save file location
+	 */
+	public void save(TaskList list)	{
 		String toWrite = "";
 		for (int i = 0; i < list.size(); i++)
 			try {
